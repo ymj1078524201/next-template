@@ -1,4 +1,4 @@
-import { getCachedUser } from "@/lib/data-fetching";
+import { getCachedUser } from "@/app/examples/cache-demo/data";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { User, Mail, ShieldCheck } from "lucide-react";

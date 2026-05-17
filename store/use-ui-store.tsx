@@ -9,7 +9,6 @@ import type { UICookieState } from '@/lib/cookies';
  * UI 状态 Store 类型定义
  */
 interface UIState extends UICookieState {
-  _hydrated: boolean;
   toggleSidebar: () => void;
   setSidebar: (open: boolean) => void;
   setTheme: (theme: 'light' | 'dark' | 'system') => void;
@@ -21,7 +20,6 @@ export const createUIStore = (initialState: UICookieState) => {
   return create<UIState>()(
     subscribeWithSelector((set) => ({
       ...initialState,
-      _hydrated: true, // 既然是从服务端初始化的，直接标记为已水合
       
       // Actions
       toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
@@ -44,9 +42,9 @@ export function UIStoreProvider({
   const [store] = useState(() => createUIStore(initialState));
 
   return (
-    <UIStoreContext.Provider value={store}>
+    <UIStoreContext value={store}>
       {children}
-    </UIStoreContext.Provider>
+    </UIStoreContext>
   );
 }
 

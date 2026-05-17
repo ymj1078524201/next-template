@@ -1,123 +1,107 @@
-import { Suspense } from "react";
-import { ModuleErrorBoundary } from "@/components/error/ModuleErrorBoundary";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ShieldCheck, Terminal, Layout, Zap, Database, Boxes } from "lucide-react";
+import { Boxes, Zap, Database, ShieldCheck, Layout } from "lucide-react";
 import Link from "next/link";
-import { UserProfileServer } from "@/components/user-profile-server";
-import { StateDemo } from "@/components/state-demo-client";
 
-export default function DemoPage() {
+export default function HomePage() {
+  const examples = [
+    {
+      title: "SWR & Mutation 安全演示",
+      description: "展示如何通过 Zod 锁死前后端数据流，实现极致的类型安全。",
+      href: "/examples/swr-demo",
+      icon: ShieldCheck,
+      color: "text-blue-500",
+      badge: "Recommended",
+      badgeVariant: "default" as const,
+    },
+    {
+      title: "部分预渲染 (PPR)",
+      description: "混合静态外壳与动态流式传输，提供极致的首屏速度。",
+      href: "/examples/ppr",
+      icon: Zap,
+      color: "text-yellow-500",
+      badge: "Experimental",
+      badgeVariant: "secondary" as const,
+    },
+    {
+      title: "\"use cache\" 指令",
+      description: "体验 Next.js 15+ 全新的服务器端异步函数缓存方案。",
+      href: "/examples/cache-directive",
+      icon: Database,
+      color: "text-green-500",
+      badge: "New",
+      badgeVariant: "outline" as const,
+    },
+    {
+      title: "Cache Components 实战",
+      description: "深入理解如何利用服务器缓存优化复杂组件的渲染性能。",
+      href: "/examples/cache-demo",
+      icon: Layout,
+      color: "text-purple-500",
+      badge: "Advanced",
+      badgeVariant: "outline" as const,
+    },
+  ];
+
   return (
     <main className="container max-w-5xl mx-auto py-12 px-4 space-y-12">
       {/* 标题区 */}
-      <section className="text-center space-y-4">
+      <section className="text-center space-y-4 py-8">
         <h1 className="text-4xl font-extrabold tracking-tight lg:text-6xl">
-          前端工程化模版演示
+          Next.js 16 工程化模版
         </h1>
         <p className="text-xl text-muted-foreground max-w-[700px] mx-auto">
-          集成了 shadcn/ui, Zod, Axios, SWR, Zustand 以及 Next.js 16 最前沿的缓存特性。
+          探索 Next.js 最前沿的特性，构建高性能、全栈类型安全的现代应用。
         </p>
       </section>
 
-      {/* 核心功能演示 */}
-      <div className="grid gap-8 md:grid-cols-2">
-        <div className="space-y-6">
-          <h2 className="text-2xl font-bold flex items-center gap-2">
-            <ShieldCheck className="w-6 h-6 text-primary" />
-            服务器组件 (Server Component)
-          </h2>
-          <ModuleErrorBoundary>
-            <Suspense fallback={<Skeleton className="h-[250px] w-full rounded-xl" />}>
-              <UserProfileServer id="user_123" />
-            </Suspense>
-          </ModuleErrorBoundary>
-        </div>
-
-        <div className="space-y-6">
-          <h2 className="text-2xl font-bold flex items-center gap-2">
-            <Layout className="w-6 h-6 text-blue-500" />
-            全局状态管理 (Zustand)
-          </h2>
-          <StateDemo />
-        </div>
-      </div>
-
-      {/* 高级特性示例 (Examples) */}
+      {/* 示例网格 */}
       <section className="space-y-6">
-        <h2 className="text-2xl font-bold flex items-center gap-2">
-          <Boxes className="w-6 h-6 text-purple-500" />
-          高级工程化示例 (Examples)
-        </h2>
-        <div className="grid gap-4 md:grid-cols-2">
-          <Link href="/swr-demo" className="group">
-            <Card className="h-full transition-all group-hover:border-blue-500/50 group-hover:shadow-md">
-              <CardHeader>
-                <div className="flex items-center gap-2 mb-2">
-                  <ShieldCheck className="w-5 h-5 text-blue-500" />
-                  <Badge variant="outline" className="text-blue-600 border-blue-200">Recommended</Badge>
-                </div>
-                <CardTitle>SWR & Mutation 安全演示</CardTitle>
-                <CardDescription>
-                  展示如何通过 Zod 锁死前后端数据流，实现极致的类型安全。
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          </Link>
-
-          <Link href="/examples/ppr" className="group">
-            <Card className="h-full transition-all group-hover:border-purple-500/50 group-hover:shadow-md">
-              <CardHeader>
-                <div className="flex items-center gap-2 mb-2">
-                  <Zap className="w-5 h-5 text-yellow-500" />
-                  <Badge variant="outline" className="text-purple-600 border-purple-200">Experimental</Badge>
-                </div>
-                <CardTitle>部分预渲染 (PPR)</CardTitle>
-                <CardDescription>
-                  混合静态外壳与动态流式传输，提供极致的首屏速度。
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          </Link>
-
-          <Link href="/examples/cache-directive" className="group">
-            <Card className="h-full transition-all group-hover:border-green-500/50 group-hover:shadow-md">
-              <CardHeader>
-                <div className="flex items-center gap-2 mb-2">
-                  <Database className="w-5 h-5 text-green-500" />
-                  <Badge variant="outline" className="text-green-600 border-green-200">New</Badge>
-                </div>
-                <CardTitle>&quot;use cache&quot; 指令</CardTitle>
-                <CardDescription>
-                  体验 Next.js 15+ 全新的服务器端异步函数缓存方案。
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          </Link>
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <Boxes className="w-6 h-6 text-primary" />
+            功能示例库
+          </h2>
+        </div>
+        
+        <div className="grid gap-6 md:grid-cols-2">
+          {examples.map((example) => (
+            <Link key={example.href} href={example.href} className="group">
+              <Card className="h-full transition-all group-hover:border-primary/50 group-hover:shadow-lg group-hover:-translate-y-1">
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className={`p-2 rounded-lg bg-muted group-hover:bg-primary/10 transition-colors`}>
+                      <example.icon className={`w-6 h-6 ${example.color}`} />
+                    </div>
+                    <Badge variant={example.badgeVariant}>{example.badge}</Badge>
+                  </div>
+                  <CardTitle className="text-xl group-hover:text-primary transition-colors">
+                    {example.title}
+                  </CardTitle>
+                  <CardDescription className="text-base">
+                    {example.description}
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            </Link>
+          ))}
         </div>
       </section>
 
-      {/* 脚手架命令 */}
-      <section className="p-8 bg-slate-900 rounded-2xl text-white space-y-6">
-        <div className="flex items-center gap-3">
-          <Terminal className="w-6 h-6 text-green-400" />
-          <h2 className="text-xl font-bold">工程化脚手架命令</h2>
-        </div>
-        <div className="grid gap-4 md:grid-cols-2">
-          <div className="space-y-2">
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Scaffolding</p>
-            <div className="bg-black/50 p-3 rounded border border-white/10 font-mono text-sm">
-              <span className="text-green-400">pnpm run gen:api</span> <span className="text-slate-400">user-profile</span>
-            </div>
-            <p className="text-xs text-slate-400">一键生成 Schema + Hook + Mock API</p>
-          </div>
-          <div className="space-y-2">
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Optimization</p>
-            <div className="bg-black/50 p-3 rounded border border-white/10 font-mono text-sm">
-              <span className="text-green-400">pnpm run analyze</span>
-            </div>
-            <p className="text-xs text-slate-400">分析生产构建的包体积分布</p>
+      {/* 快速开始 */}
+      <section className="bg-muted/50 border rounded-3xl p-8 md:p-12">
+        <div className="max-w-3xl mx-auto text-center space-y-6">
+          <h2 className="text-3xl font-bold">准备好开始了吗？</h2>
+          <p className="text-muted-foreground">
+            本模板已经配置好了所有必要的工具和最佳实践。你可以直接在 <code>app/examples</code> 目录下参考现有的实现，并开始构建你自己的功能。
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <code className="bg-background px-4 py-2 rounded-lg border font-mono text-sm">
+              pnpm install
+            </code>
+            <code className="bg-background px-4 py-2 rounded-lg border font-mono text-sm">
+              pnpm run dev
+            </code>
           </div>
         </div>
       </section>

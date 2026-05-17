@@ -4,6 +4,7 @@ const MAX_AGE = 60 * 60 * 24 * 365; // 1年
 export interface UICookieState {
   sidebarOpen: boolean;
   theme: 'light' | 'dark' | 'system';
+  // 可以增加更多的用户偏好设置
 }
 
 // 与 store 初始值保持一致，作为 Cookie 缺失时的兜底

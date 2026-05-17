@@ -5,6 +5,8 @@ import { Suspense } from "react";
 import { parseUICookie } from "@/lib/cookies";
 import { UIStoreProvider } from "@/store/use-ui-store";
 import { SyncUIState } from "@/components/store-initializer";
+import { Header } from "@/components/layout/header";
+import { Sidebar } from "@/components/layout/sidebar";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -75,7 +77,15 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col">
         <Suspense fallback={null}>
-          <UIStateSync>{children}</UIStateSync>
+          <UIStateSync>
+            <Header />
+            <div className="flex flex-1">
+              <Sidebar />
+              <div className="flex-1 overflow-y-auto">
+                {children}
+              </div>
+            </div>
+          </UIStateSync>
         </Suspense>
       </body>
     </html>

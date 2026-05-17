@@ -61,8 +61,8 @@ export default function CacheDemoPage() {
           </div>
 
           <div className="flex gap-4">
-            <Button>
-              <Link href="/">返回普通 SWR 演示</Link>
+            <Button variant="outline">
+              <Link href="/">返回首页</Link>
             </Button>
           </div>
         </div>
