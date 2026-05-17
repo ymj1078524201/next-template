@@ -1,65 +1,126 @@
-import Image from "next/image";
+import { Suspense } from "react";
+import { ModuleErrorBoundary } from "@/components/error/ModuleErrorBoundary";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ShieldCheck, Terminal, Layout, Zap, Database, Boxes } from "lucide-react";
+import Link from "next/link";
+import { UserProfileServer } from "@/components/user-profile-server";
+import { StateDemo } from "@/components/state-demo-client";
 
-export default function Home() {
+export default function DemoPage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="container max-w-5xl mx-auto py-12 px-4 space-y-12">
+      {/* 标题区 */}
+      <section className="text-center space-y-4">
+        <h1 className="text-4xl font-extrabold tracking-tight lg:text-6xl">
+          前端工程化模版演示
+        </h1>
+        <p className="text-xl text-muted-foreground max-w-[700px] mx-auto">
+          集成了 shadcn/ui, Zod, Axios, SWR, Zustand 以及 Next.js 16 最前沿的缓存特性。
+        </p>
+      </section>
+
+      {/* 核心功能演示 */}
+      <div className="grid gap-8 md:grid-cols-2">
+        <div className="space-y-6">
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <ShieldCheck className="w-6 h-6 text-primary" />
+            服务器组件 (Server Component)
+          </h2>
+          <ModuleErrorBoundary>
+            <Suspense fallback={<Skeleton className="h-[250px] w-full rounded-xl" />}>
+              <UserProfileServer id="user_123" />
+            </Suspense>
+          </ModuleErrorBoundary>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <div className="space-y-6">
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <Layout className="w-6 h-6 text-blue-500" />
+            全局状态管理 (Zustand)
+          </h2>
+          <StateDemo />
         </div>
-      </main>
-    </div>
+      </div>
+
+      {/* 高级特性示例 (Examples) */}
+      <section className="space-y-6">
+        <h2 className="text-2xl font-bold flex items-center gap-2">
+          <Boxes className="w-6 h-6 text-purple-500" />
+          高级工程化示例 (Examples)
+        </h2>
+        <div className="grid gap-4 md:grid-cols-2">
+          <Link href="/swr-demo" className="group">
+            <Card className="h-full transition-all group-hover:border-blue-500/50 group-hover:shadow-md">
+              <CardHeader>
+                <div className="flex items-center gap-2 mb-2">
+                  <ShieldCheck className="w-5 h-5 text-blue-500" />
+                  <Badge variant="outline" className="text-blue-600 border-blue-200">Recommended</Badge>
+                </div>
+                <CardTitle>SWR & Mutation 安全演示</CardTitle>
+                <CardDescription>
+                  展示如何通过 Zod 锁死前后端数据流，实现极致的类型安全。
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </Link>
+
+          <Link href="/examples/ppr" className="group">
+            <Card className="h-full transition-all group-hover:border-purple-500/50 group-hover:shadow-md">
+              <CardHeader>
+                <div className="flex items-center gap-2 mb-2">
+                  <Zap className="w-5 h-5 text-yellow-500" />
+                  <Badge variant="outline" className="text-purple-600 border-purple-200">Experimental</Badge>
+                </div>
+                <CardTitle>部分预渲染 (PPR)</CardTitle>
+                <CardDescription>
+                  混合静态外壳与动态流式传输，提供极致的首屏速度。
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </Link>
+
+          <Link href="/examples/cache-directive" className="group">
+            <Card className="h-full transition-all group-hover:border-green-500/50 group-hover:shadow-md">
+              <CardHeader>
+                <div className="flex items-center gap-2 mb-2">
+                  <Database className="w-5 h-5 text-green-500" />
+                  <Badge variant="outline" className="text-green-600 border-green-200">New</Badge>
+                </div>
+                <CardTitle>&quot;use cache&quot; 指令</CardTitle>
+                <CardDescription>
+                  体验 Next.js 15+ 全新的服务器端异步函数缓存方案。
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </Link>
+        </div>
+      </section>
+
+      {/* 脚手架命令 */}
+      <section className="p-8 bg-slate-900 rounded-2xl text-white space-y-6">
+        <div className="flex items-center gap-3">
+          <Terminal className="w-6 h-6 text-green-400" />
+          <h2 className="text-xl font-bold">工程化脚手架命令</h2>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="space-y-2">
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Scaffolding</p>
+            <div className="bg-black/50 p-3 rounded border border-white/10 font-mono text-sm">
+              <span className="text-green-400">pnpm run gen:api</span> <span className="text-slate-400">user-profile</span>
+            </div>
+            <p className="text-xs text-slate-400">一键生成 Schema + Hook + Mock API</p>
+          </div>
+          <div className="space-y-2">
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Optimization</p>
+            <div className="bg-black/50 p-3 rounded border border-white/10 font-mono text-sm">
+              <span className="text-green-400">pnpm run analyze</span>
+            </div>
+            <p className="text-xs text-slate-400">分析生产构建的包体积分布</p>
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }
