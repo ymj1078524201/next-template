@@ -34,6 +34,7 @@ function ThemeScript() {
       dangerouslySetInnerHTML={{
         __html: `
           try {
+            document.documentElement.classList.add('js');
             const match = document.cookie.match(/ui-state=([^;]+)/);
             if (match) {
               const state = JSON.parse(decodeURIComponent(match[1]));

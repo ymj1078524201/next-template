@@ -127,4 +127,10 @@
   html {
     @apply font-sans;
   }
+
+  /* 初始隐藏动画元素，防止首屏闪烁 (FOUC) */
+  /* 只在 JS 环境下隐藏，确保无 JS 时内容依然可见 */
+  .js .reveal, .js .ui-reveal, .js .detail-reveal, .js .module-card {
+    opacity: 0;
+  }
 }

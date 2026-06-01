@@ -10,7 +10,14 @@ import {
   ChevronLeft, 
   ChevronRight,
   Settings,
-  HelpCircle
+  HelpCircle,
+  Box,
+  Cpu,
+  RefreshCcw,
+  Navigation,
+  Type,
+  MousePointer2,
+  Plane
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -27,6 +34,41 @@ const menuItems = [
     title: "SWR_X_ZOD",
     href: "/examples/swr-demo",
     icon: ShieldCheck,
+  },
+  {
+    title: "SVG_SCROLL",
+    href: "/examples/svg-scroll",
+    icon: Box,
+  },
+  {
+    title: "GSAP_MAGIC",
+    href: "/examples/gsap-magic",
+    icon: Cpu,
+  },
+  {
+    title: "GSAP_MORPH",
+    href: "/examples/gsap-morph",
+    icon: RefreshCcw,
+  },
+  {
+    title: "GSAP_MOTION",
+    href: "/examples/gsap-motion",
+    icon: Navigation,
+  },
+  {
+    title: "GSAP_TEXT",
+    href: "/examples/gsap-text",
+    icon: Type,
+  },
+  {
+    title: "GSAP_OBSERVER",
+    href: "/examples/gsap-observer",
+    icon: MousePointer2,
+  },
+  {
+    title: "GSAP_FLIGHT",
+    href: "/examples/gsap-flight",
+    icon: Plane,
   },
 ];
 

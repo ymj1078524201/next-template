@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { gsap } from "gsap";
 import { useSafeSWR, useSafeSWRMutation } from "@/hooks/use-safe-swr";
 import { 
   getArticlesApi, 
@@ -11,22 +12,16 @@ import {
   ArticleSchema,
   Article
 } from "./data";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Search, Plus, Send, RefreshCw, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { Search, Plus, Send, RefreshCcw, AlertTriangle, CheckCircle2, Database, TerminalSquare, Activity, FileText } from "lucide-react";
+import Link from "next/link";
 
-/**
- * Demo 场景：文章管理系统
- */
 export default function SWRDemoPage() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  
   // 1. 状态管理：筛选条件
   const [filters, setFilters] = useState({ search: "", category: "" });
 
   // 2. 使用 useSafeSWR 获取数据 (响应式)
-  // 当 filters 改变时，SWR 自动触发重新请求
   const { data: articles, isLoading, mutate, error } = useSafeSWR(
     ["/api/articles", filters], 
     ArticleListSchema,
@@ -34,11 +29,10 @@ export default function SWRDemoPage() {
   );
 
   // 3. 使用 useSafeSWRMutation 提交数据
-  // 我们为输入定义一个临时的 Schema 进行拦截校验
   const InputSchema = ArticleSchema.omit({ id: true, createdAt: true });
   
   const { trigger: createArticle, isMutating: isSubmitting } = useSafeSWRMutation(
-    "/api/articles", // 关联到上面的 key，提交成功后方便刷新缓存
+    "/api/articles",
     CreateResponseSchema,
     createArticleApi,
     InputSchema
@@ -55,149 +49,258 @@ export default function SWRDemoPage() {
       const result = await createArticle(form);
       setMsg({ type: 'success', text: result.message });
       setForm({ title: "", content: "", category: "tech" });
-      // 提交成功后，刷新列表缓存
       mutate();
     } catch (err: any) {
       setMsg({ type: 'error', text: err.message });
     }
   };
 
+  // 入场动画
+  useEffect(() => {
+    const q = gsap.utils.selector(containerRef);
+    const tl = gsap.timeline();
+
+    tl.fromTo(q(".ui-reveal"), 
+      { y: 20, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.6, stagger: 0.1, ease: "power2.out" }
+    );
+  }, []);
+
   return (
-    <main className="container max-w-5xl mx-auto py-12 px-4 space-y-12">
-      <header className="space-y-4">
-        <h1 className="text-4xl font-black tracking-tight">SWR & Mutation 安全模版演示</h1>
-        <p className="text-muted-foreground text-lg">
-          展示如何通过 Zod 锁死前后端数据流，实现极致的类型安全和响应式体验。
-        </p>
-      </header>
+    <main ref={containerRef} className="min-h-screen bg-background text-foreground font-mono p-4 md:p-12 relative overflow-hidden">
+      {/* 工程网格背景 */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.04] dark:opacity-[0.08]" 
+           style={{ backgroundImage: 'linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
 
-      <div className="grid gap-8 lg:grid-cols-3">
-        {/* 左侧：发布表单 (Mutation) */}
-        <section className="space-y-6">
-          <Card className="border-2 border-primary/10 shadow-xl">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Plus className="w-5 h-5" /> 发布新文章
-              </CardTitle>
-              <CardDescription>提交数据前，前端会自动进行 Zod 校验</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">文章标题</label>
-                <Input 
-                  placeholder="输入标题..." 
-                  value={form.title}
-                  onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
-                />
+      <div className="max-w-6xl mx-auto space-y-12 relative z-10">
+        
+        {/* 顶栏 Header */}
+        <header className="ui-reveal flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b-2 border-foreground pb-6">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <div className="p-1.5 bg-primary text-primary-foreground">
+                <Database className="w-5 h-5" />
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">文章内容</label>
-                <textarea 
-                  className="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  placeholder="输入内容..." 
-                  value={form.content}
-                  onChange={e => setForm(f => ({ ...f, content: e.target.value }))}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">分类</label>
-                <select 
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  value={form.category}
-                  onChange={e => setForm(f => ({ ...f, category: e.target.value as any }))}
-                >
-                  <option value="tech">科技</option>
-                  <option value="work">工作</option>
-                  <option value="life">生活</option>
-                </select>
-              </div>
+              <h1 className="text-2xl font-black italic tracking-tighter uppercase">
+                SWR_X_ZOD_PROTOCOL
+              </h1>
+            </div>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-widest max-w-lg leading-relaxed">
+              Demonstrating end-to-end type safety. Zod schema validation blocks malformed data at the network layer. Reactive SWR cache updates on mutation.
+            </p>
+          </div>
+          <div className="text-right text-[10px] uppercase tracking-tighter hidden md:block">
+            <div className="text-muted-foreground">STATUS</div>
+            <div className="font-bold text-primary flex items-center justify-end gap-1">
+              <Activity className="w-3 h-3 animate-pulse" /> NETWORK_ACTIVE
+            </div>
+          </div>
+        </header>
 
-              {msg && (
-                <div className={`p-3 rounded-lg flex items-start gap-2 text-sm ${
-                  msg.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                }`}>
-                  {msg.type === 'success' ? <CheckCircle2 className="w-4 h-4 mt-0.5" /> : <AlertTriangle className="w-4 h-4 mt-0.5" />}
-                  <span className="whitespace-pre-wrap">{msg.text}</span>
+        <div className="grid gap-8 lg:grid-cols-12 items-start">
+          
+          {/* 左侧：数据注入终端 (Mutation) */}
+          <section className="ui-reveal lg:col-span-5 space-y-6">
+            <div className="bg-card border-2 border-foreground shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,0.1)] relative">
+              {/* 终端头部 */}
+              <div className="bg-foreground text-background p-3 flex justify-between items-center">
+                <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest">
+                  <TerminalSquare className="w-4 h-4 text-primary" />
+                  Data_Injection_Terminal
                 </div>
-              )}
-            </CardContent>
-            <CardFooter>
-              <Button className="w-full" disabled={isSubmitting} onClick={handleSubmit}>
-                {isSubmitting ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" />}
-                立即发布
-              </Button>
-            </CardFooter>
-          </Card>
-        </section>
-
-        {/* 右侧：文章列表 (Reactive SWR) */}
-        <section className="lg:col-span-2 space-y-6">
-          <div className="flex flex-col sm:flex-row gap-4 items-end">
-            <div className="flex-1 space-y-2 w-full">
-              <label className="text-sm font-medium flex items-center gap-2">
-                <Search className="w-4 h-4" /> 搜索文章
-              </label>
-              <Input 
-                placeholder="搜索标题..." 
-                value={filters.search}
-                onChange={e => setFilters(prev => ({ ...prev, search: e.target.value }))}
-              />
-            </div>
-            <div className="w-full sm:w-40 space-y-2">
-              <label className="text-sm font-medium">分类过滤</label>
-              <select 
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                value={filters.category}
-                onChange={e => setFilters(prev => ({ ...prev, category: e.target.value }))}
-              >
-                <option value="">全部</option>
-                <option value="tech">科技</option>
-                <option value="work">工作</option>
-                <option value="life">生活</option>
-              </select>
-            </div>
-            <Button variant="outline" onClick={() => mutate()} disabled={isLoading}>
-              <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-            </Button>
-          </div>
-
-          <div className="space-y-4">
-            {isLoading ? (
-              [1, 2, 3].map(i => <Skeleton key={i} className="h-32 w-full rounded-xl" />)
-            ) : error ? (
-              <div className="p-8 border-2 border-dashed rounded-2xl text-center space-y-2">
-                <AlertTriangle className="w-10 h-10 mx-auto text-red-500" />
-                <h3 className="text-lg font-bold">加载失败</h3>
-                <p className="text-muted-foreground">{error.message}</p>
+                <div className="flex gap-1.5">
+                  <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                  <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
+                  <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                </div>
               </div>
-            ) : articles?.length === 0 ? (
-              <div className="p-12 border-2 border-dashed rounded-2xl text-center space-y-2">
-                <Search className="w-10 h-10 mx-auto text-muted-foreground" />
-                <p className="text-muted-foreground">没有找到匹配的文章</p>
-              </div>
-            ) : (
-              articles?.map((article: Article) => (
-                <Card key={article.id} className="group hover:border-primary/50 transition-colors">
-                  <CardHeader className="pb-2">
-                    <div className="flex justify-between items-start">
-                      <CardTitle className="text-xl group-hover:text-primary transition-colors">
-                        {article.title}
-                      </CardTitle>
-                      <Badge variant="outline">{article.category}</Badge>
+
+              {/* 终端主体 */}
+              <div className="p-6 space-y-6">
+                <div className="text-[10px] text-muted-foreground uppercase italic">
+                  &gt; Awaiting valid payload structure...
+                </div>
+
+                <div className="space-y-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Payload.Title [String]</label>
+                    <input 
+                      type="text"
+                      className="w-full bg-muted/50 border border-input p-3 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-sans"
+                      placeholder="Enter designation..." 
+                      value={form.title}
+                      onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
+                    />
+                  </div>
+                  
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Payload.Content [Text]</label>
+                    <textarea 
+                      className="w-full min-h-[120px] bg-muted/50 border border-input p-3 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-sans resize-y"
+                      placeholder="Input parameters..." 
+                      value={form.content}
+                      onChange={e => setForm(f => ({ ...f, content: e.target.value }))}
+                    />
+                  </div>
+                  
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Payload.Class [Enum]</label>
+                    <div className="relative">
+                      <select 
+                        className="w-full bg-muted/50 border border-input p-3 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all appearance-none uppercase"
+                        value={form.category}
+                        onChange={e => setForm(f => ({ ...f, category: e.target.value as any }))}
+                      >
+                        <option value="tech">Technology</option>
+                        <option value="work">Operations</option>
+                        <option value="life">Biological</option>
+                      </select>
+                      <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                        <ArrowDownIcon className="w-3 h-3 text-muted-foreground" />
+                      </div>
                     </div>
-                  </CardHeader>
-                  <CardContent className="pb-4">
-                    <p className="text-muted-foreground line-clamp-2">{article.content}</p>
-                  </CardContent>
-                  <CardFooter className="pt-0 text-xs text-muted-foreground">
-                    发布于 {new Date(article.createdAt).toLocaleString()}
-                  </CardFooter>
-                </Card>
-              ))
-            )}
-          </div>
-        </section>
+                  </div>
+                </div>
+
+                {msg && (
+                  <div className={`p-3 text-[10px] uppercase font-bold tracking-widest flex items-start gap-2 border ${
+                    msg.type === 'success' ? 'bg-green-500/10 border-green-500/20 text-green-500' : 'bg-red-500/10 border-red-500/20 text-red-500'
+                  }`}>
+                    {msg.type === 'success' ? <CheckCircle2 className="w-4 h-4 shrink-0" /> : <AlertTriangle className="w-4 h-4 shrink-0" />}
+                    <span className="whitespace-pre-wrap mt-0.5">{msg.text}</span>
+                  </div>
+                )}
+
+                <button 
+                  disabled={isSubmitting} 
+                  onClick={handleSubmit}
+                  className="w-full py-4 bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-2 hover:opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed group"
+                >
+                  {isSubmitting ? (
+                    <><RefreshCcw className="w-4 h-4 animate-spin" /> Processing...</>
+                  ) : (
+                    <><Send className="w-4 h-4 group-hover:translate-x-1 transition-transform" /> Execute_Injection</>
+                  )}
+                </button>
+              </div>
+            </div>
+          </section>
+
+          {/* 右侧：实时数据流 (Reactive SWR) */}
+          <section className="ui-reveal lg:col-span-7 space-y-6">
+            
+            {/* 过滤器 */}
+            <div className="bg-card border border-border p-4 flex flex-col sm:flex-row gap-4">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <input 
+                  type="text"
+                  placeholder="QUERY_DATABASE..." 
+                  className="w-full bg-muted/50 border border-border py-2 pl-9 pr-3 text-xs focus:outline-none focus:border-primary transition-colors uppercase placeholder:text-muted-foreground"
+                  value={filters.search}
+                  onChange={e => setFilters(prev => ({ ...prev, search: e.target.value }))}
+                />
+              </div>
+              <div className="sm:w-48 relative">
+                 <select 
+                  className="w-full bg-muted/50 border border-border py-2 px-3 text-xs focus:outline-none focus:border-primary transition-colors appearance-none uppercase"
+                  value={filters.category}
+                  onChange={e => setFilters(prev => ({ ...prev, category: e.target.value }))}
+                >
+                  <option value="">[ ALL_CLASSES ]</option>
+                  <option value="tech">Technology</option>
+                  <option value="work">Operations</option>
+                  <option value="life">Biological</option>
+                </select>
+                <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
+                  <ArrowDownIcon className="w-3 h-3 text-muted-foreground" />
+                </div>
+              </div>
+              <button 
+                onClick={() => mutate()} 
+                disabled={isLoading}
+                className="w-10 h-10 shrink-0 bg-muted flex items-center justify-center hover:bg-muted/80 transition-colors disabled:opacity-50"
+                title="Force Cache Refresh"
+              >
+                <RefreshCcw className={`w-4 h-4 text-muted-foreground ${isLoading ? 'animate-spin text-primary' : ''}`} />
+              </button>
+            </div>
+
+            {/* 数据列表 */}
+            <div className="space-y-4">
+              <div className="text-[10px] text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+                <div className="h-px bg-border flex-1"></div>
+                Live_Stream_Data
+                <div className="h-px bg-border flex-1"></div>
+              </div>
+
+              {isLoading ? (
+                [1, 2, 3].map(i => (
+                  <div key={i} className="bg-card border border-border p-6 space-y-4 opacity-50 animate-pulse">
+                    <div className="h-4 bg-muted w-1/3"></div>
+                    <div className="h-2 bg-muted/50 w-full"></div>
+                    <div className="h-2 bg-muted/50 w-2/3"></div>
+                  </div>
+                ))
+              ) : error ? (
+                <div className="bg-destructive/10 border border-destructive/20 p-8 text-center space-y-4">
+                  <AlertTriangle className="w-8 h-8 mx-auto text-destructive" />
+                  <div className="text-xs font-bold text-destructive uppercase tracking-widest">Connection_Severed</div>
+                  <p className="text-[10px] text-destructive font-sans">{error.message}</p>
+                </div>
+              ) : articles?.length === 0 ? (
+                <div className="bg-muted/30 border border-border border-dashed p-12 text-center space-y-4">
+                  <FileText className="w-8 h-8 mx-auto text-muted-foreground/30" />
+                  <div className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest">Empty_Record_Set</div>
+                </div>
+              ) : (
+                articles?.map((article: Article) => (
+                  <div key={article.id} className="bg-card border-l-4 border-l-primary border-y border-r border-border p-5 hover:border-r-muted-foreground/50 hover:border-y-muted-foreground/50 transition-colors group relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-2 text-[8px] text-muted-foreground/30 opacity-50 group-hover:opacity-100 transition-opacity">
+                      ID: {article.id.substring(0, 8)}
+                    </div>
+                    
+                    <div className="flex justify-between items-start mb-3 pr-12">
+                      <h3 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors font-sans">
+                        {article.title}
+                      </h3>
+                      <span className="px-2 py-0.5 bg-muted text-[9px] font-bold uppercase text-muted-foreground tracking-wider">
+                        CLASS_{article.category}
+                      </span>
+                    </div>
+                    
+                    <p className="text-xs text-muted-foreground font-sans line-clamp-2 leading-relaxed mb-4">
+                      {article.content}
+                    </p>
+                    
+                    <div className="flex justify-between items-center text-[9px] text-muted-foreground/50 uppercase tracking-widest border-t border-dashed border-border pt-3">
+                      <span>Log_Time: {new Date(article.createdAt).toLocaleTimeString()}</span>
+                      <span className="text-green-500 font-bold">Verified</span>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </section>
+        </div>
+        
+        {/* 底部返回链接 */}
+        <div className="ui-reveal pt-8 text-center">
+           <Link href="/" className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground transition-colors">
+              [ Terminate_Session ]
+           </Link>
+        </div>
+
       </div>
     </main>
+  );
+}
+
+// 辅助图标组件
+function ArrowDownIcon(props: any) {
+  return (
+    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m6 9 6 6 6-6"/>
+    </svg>
   );
 }

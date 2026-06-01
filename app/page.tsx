@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { ShieldCheck, ArrowRight, Cpu, Zap, Layers } from "lucide-react";
+import { ShieldCheck, ArrowRight, Cpu, Zap, Layers, Box, RefreshCcw, Navigation, Type, MousePointer2, Plane } from "lucide-react";
 import Link from "next/link";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -18,26 +18,39 @@ export default function HomePage() {
   useEffect(() => {
     const ctx = gsap.context(() => {
       // Staggered reveal of hero elements
-      gsap.from(".reveal", {
-        y: 40,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.1,
-        ease: "power3.out",
-      });
+      // 使用 fromTo 明确从 opacity 0 开始，确保与 CSS 初始状态同步
+      gsap.fromTo(".reveal", 
+        { 
+          y: 40, 
+          opacity: 0 
+        },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: "power3.out",
+        }
+      );
 
       // Module cards entrance
-      gsap.from(".module-card", {
-        scale: 0.95,
-        opacity: 0,
-        duration: 0.6,
-        stagger: 0.1,
-        ease: "back.out(1.2)",
-        scrollTrigger: {
-          trigger: modulesRef.current,
-          start: "top 80%",
+      gsap.fromTo(".module-card",
+        {
+          scale: 0.95,
+          opacity: 0,
         },
-      });
+        {
+          scale: 1,
+          opacity: 1,
+          duration: 0.6,
+          stagger: 0.1,
+          ease: "back.out(1.2)",
+          scrollTrigger: {
+            trigger: modulesRef.current,
+            start: "top 80%",
+          },
+        }
+      );
     }, containerRef);
 
     return () => ctx.revert();
@@ -75,6 +88,62 @@ export default function HomePage() {
       icon: Cpu,
       href: "#",
       status: "Operational",
+    },
+    {
+      title: "SVG_DYNAMIC_SCAN",
+      code: "GSAP_SCROLL_SVG",
+      description: "Multi-angle SVG drawing animation synchronized with scroll progress.",
+      icon: Box,
+      href: "/examples/svg-scroll",
+      status: "New_Protocol",
+    },
+    {
+      title: "GSAP_MAGIC_MODULE",
+      code: "FLIP_X_TEXT",
+      description: "Advanced layout morphing and cinematic text decoding protocols.",
+      icon: Cpu,
+      href: "/examples/gsap-magic",
+      status: "Experimental",
+    },
+    {
+      title: "MORPH_PATH_RECON",
+      code: "GSAP_MORPH_SVG",
+      description: "Seamless path transformation between disparate geometric entities.",
+      icon: RefreshCcw,
+      href: "/examples/gsap-morph",
+      status: "Protocol_v1",
+    },
+    {
+      title: "KINETIC_TRAJECTORY",
+      code: "GSAP_MOTION_PATH",
+      description: "Autonomous data packet navigation along complex spline coordinates.",
+      icon: Navigation,
+      href: "/examples/gsap-motion",
+      status: "Protocol_v2",
+    },
+    {
+      title: "TYPOGRAPHY_DISMANTLE",
+      code: "GSAP_SPLIT_TEXT",
+      description: "Granular character and line manipulation for cinematic text reveals.",
+      icon: Type,
+      href: "/examples/gsap-text",
+      status: "Protocol_v3",
+    },
+    {
+      title: "GESTURE_OBSERVER",
+      code: "GSAP_OBSERVER_OS",
+      description: "Next-gen scroll hijacking for full-screen immersive sector navigation.",
+      icon: MousePointer2,
+      href: "/examples/gsap-observer",
+      status: "Experimental",
+    },
+    {
+      title: "FLIGHT_RECON_PROTO",
+      code: "GSAP_MORPH_FLIGHT",
+      description: "Advanced variable-geometry aircraft reconfiguration using MorphSVG.",
+      icon: Plane,
+      href: "/examples/gsap-flight",
+      status: "Classified",
     },
   ];
 
