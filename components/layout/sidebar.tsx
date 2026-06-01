@@ -19,29 +19,14 @@ import { cn } from "@/lib/utils";
 
 const menuItems = [
   {
-    title: "首页",
+    title: "ROOT",
     href: "/",
     icon: Home,
   },
   {
-    title: "SWR Demo",
+    title: "SWR_X_ZOD",
     href: "/examples/swr-demo",
     icon: ShieldCheck,
-  },
-  {
-    title: "PPR 演示",
-    href: "/examples/ppr",
-    icon: Zap,
-  },
-  {
-    title: "Cache 指令",
-    href: "/examples/cache-directive",
-    icon: Database,
-  },
-  {
-    title: "Cache Components",
-    href: "/examples/cache-demo",
-    icon: Layout,
   },
 ];
 
@@ -53,27 +38,29 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        "relative flex flex-col border-r bg-card transition-all duration-300 ease-in-out",
-        sidebarOpen ? "w-64" : "w-20"
+        "relative flex flex-col border-r bg-card/50 transition-all duration-300 ease-in-out",
+        sidebarOpen ? "w-64" : "w-16"
       )}
     >
       {/* 折叠按钮 */}
-      <Button
-        variant="ghost"
-        size="icon"
+      <button
         onClick={toggleSidebar}
-        className="absolute -right-4 top-10 z-20 h-8 w-8 rounded-full border bg-background shadow-sm hover:bg-accent"
+        className="absolute -right-3 top-20 z-20 h-6 w-6 border bg-background flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors"
       >
         {sidebarOpen ? (
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft className="h-3 w-3" />
         ) : (
-          <ChevronRight className="h-4 w-4" />
+          <ChevronRight className="h-3 w-3" />
         )}
-      </Button>
+      </button>
 
       {/* 导航内容 */}
-      <div className="flex flex-1 flex-col gap-4 p-4 pt-16">
-        <nav className="flex flex-col gap-2">
+      <div className="flex flex-1 flex-col gap-6 p-3 pt-20">
+        <div className={cn("text-[9px] font-mono text-muted-foreground tracking-tighter uppercase mb-2", !sidebarOpen && "text-center")}>
+          {sidebarOpen ? "Navigation_Protocols" : "NAV"}
+        </div>
+        
+        <nav className="flex flex-col gap-1">
           {menuItems.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -81,14 +68,17 @@ export function Sidebar() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all hover:bg-accent",
-                  isActive ? "bg-accent text-primary" : "text-muted-foreground",
+                  "group flex items-center gap-3 px-3 py-2 text-[11px] font-mono tracking-tighter transition-all relative overflow-hidden",
+                  isActive ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-accent hover:text-foreground",
                   !sidebarOpen && "justify-center px-0"
                 )}
                 title={!sidebarOpen ? item.title : undefined}
               >
-                <item.icon className={cn("h-5 w-5 shrink-0", isActive && "text-primary")} />
+                <item.icon className={cn("h-4 w-4 shrink-0", isActive ? "text-primary-foreground" : "group-hover:text-primary")} />
                 {sidebarOpen && <span>{item.title}</span>}
+                {isActive && sidebarOpen && (
+                  <div className="absolute right-0 top-0 h-full w-1 bg-white/20"></div>
+                )}
               </Link>
             );
           })}
@@ -96,26 +86,26 @@ export function Sidebar() {
       </div>
 
       {/* 底部功能 */}
-      <div className="mt-auto flex flex-col gap-2 p-4 border-t">
+      <div className="mt-auto flex flex-col gap-px bg-border p-3">
         <Button
           variant="ghost"
           className={cn(
-            "flex items-center gap-3 px-3 justify-start text-muted-foreground",
+            "flex items-center gap-3 px-3 h-10 justify-start text-muted-foreground font-mono text-[10px] uppercase rounded-none",
             !sidebarOpen && "justify-center px-0"
           )}
         >
-          <Settings className="h-5 w-5 shrink-0" />
-          {sidebarOpen && <span>设置</span>}
+          <Settings className="h-4 w-4 shrink-0" />
+          {sidebarOpen && <span>Config</span>}
         </Button>
         <Button
           variant="ghost"
           className={cn(
-            "flex items-center gap-3 px-3 justify-start text-muted-foreground",
+            "flex items-center gap-3 px-3 h-10 justify-start text-muted-foreground font-mono text-[10px] uppercase rounded-none",
             !sidebarOpen && "justify-center px-0"
           )}
         >
-          <HelpCircle className="h-5 w-5 shrink-0" />
-          {sidebarOpen && <span>帮助</span>}
+          <HelpCircle className="h-4 w-4 shrink-0" />
+          {sidebarOpen && <span>System_Manual</span>}
         </Button>
       </div>
     </aside>

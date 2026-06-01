@@ -46,7 +46,7 @@ export async function getArticlesApi(params: { category?: string; search?: strin
 
   // 模拟数据返回
   const allArticles: Article[] = [
-    { id: "1", title: "Next.js 16 新特性", content: "PPR 和 Cache Components 是重点。", category: "tech", createdAt: new Date().toISOString() },
+    { id: "1", title: "Next.js 16 新特性", content: "App Router 和服务端组件是重点。", category: "tech", createdAt: new Date().toISOString() },
     { id: "2", title: "如何保持高效工作", content: "深潜模式是关键。", category: "work", createdAt: new Date().toISOString() },
     { id: "3", title: "周末的咖啡馆之旅", content: "这里的拿铁非常棒。", category: "life", createdAt: new Date().toISOString() },
   ];

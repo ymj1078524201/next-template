@@ -8,7 +8,6 @@ const withBundleAnalyzer = nextBundleAnalyzer({
 
 const nextConfig: NextConfig = {
   /* config options here */
-  cacheComponents: true,
 };
 
 export default withBundleAnalyzer(nextConfig);

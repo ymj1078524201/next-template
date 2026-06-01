@@ -4,7 +4,7 @@
 
 ## 🚀 核心特性
 
-- **Next.js 16+**: 使用 PPR (Partial Prerendering) 和 `use cache` 指令。
+- **Next.js 16+**: 基于最新的 App Router 架构。
 - **全栈类型安全**: 基于 **Zod** 的数据校验，锁死从 API 到 UI 的数据流。
 - **状态管理**: 使用 **Zustand** + Context 模式，支持服务端初始化与首屏零闪烁。
 - **主题系统**: 完美的 Dark Mode 支持，通过 `<ThemeScript />` 解决首屏 FOUC 问题。
@@ -82,5 +82,6 @@ pnpm run analyze
 ## 📖 最佳实践说明
 
 1. **数据请求**: 始终优先使用 `useSafeSWR`，它强制要求传入 Zod Schema，确保数据在进入组件前是安全的。
-2. **服务端组件**: 对于静态内容，尽量使用 Server Component；对于动态数据，使用 Suspense 包裹并配合 `use cache` 指令。
+2. **服务端组件**: 对于静态内容，尽量使用 Server Component；对于动态数据，使用 Suspense 包裹实现流式渲染。
 3. **状态同步**: UI 相关的全局状态（如主题、侧边栏开关）会同步到 Cookie 中，确保 SSR 阶段能读取到正确值。
+正确值。
